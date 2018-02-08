@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
@@ -35,7 +35,7 @@ public class HomeController {
 	@ApiOperation(value = "allHail", notes = "Get successful message", tags = { "Internal" })
 	@ApiResponses(value = {
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
-	@RequestMapping(value = "/json200", method = RequestMethod.GET)
+	@GetMapping("/json200")
 	public HomeResponse allHail() {
 
 		HomeResponse hr = new HomeResponse(200, appName, "All Hail Madoka");
@@ -49,7 +49,7 @@ public class HomeController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 404, message = "Got forbidden.", response = HomeResponse.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = HomeResponse.class) })
-	@RequestMapping(value = "/json403", method = RequestMethod.GET)
+	@GetMapping("/json403")
 	public HomeResponse test() throws ServiceException {
 		throw new ServiceException(HttpStatus.FORBIDDEN.value(), "forbidden liao");
 	}

@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -16,7 +15,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(schema = "precure", name = "SBSHOP_USER")
+@Table(schema = "precure", name = "BOOT__SBSHOP_USER")
 public class User extends BaseEntity {
 
 	/**
@@ -24,11 +23,11 @@ public class User extends BaseEntity {
 	 */
 	private static final long serialVersionUID = 9019585072757573100L;
 
-	// MySQL doesn't support Sequence and SpringBoot cannot simulate like normal
-	// Spring, hence have to use GenerationType.AUTO
+	// MySQL doesn't support Sequence and SpringBoot Dialect cannot simulate
+	// like normal Spring, hence have to use GenerationType.IDENTIY, TABLE or
+	// AUTO.
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_USER")
-	@SequenceGenerator(name = "SEQ_USER", sequenceName = "SEQ_USER", schema = "precure", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long userId;
 
 	@Column(length = 9, nullable = false, unique = true)

@@ -49,6 +49,9 @@ public class UserServiceImpl implements UserService {
 		Long uid = userDto.getUserId();
 		if (uid != null) {
 			u = userRepo.findOne(uid);
+			if (u == null) {
+				throw new ServiceException("User with id=" + uid + " is not found, unable to update.");
+			}
 			u.setModifiedDate(new Date());
 		} else {
 			u.setCreatedDate(new Date());

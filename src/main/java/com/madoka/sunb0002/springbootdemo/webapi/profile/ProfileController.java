@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,7 +57,7 @@ public class ProfileController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "User is found.", response = ProfileResponseUser.class),
 			@ApiResponse(code = 404, message = "User is not found.", response = ProfileResponseUser.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUser.class) })
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	@GetMapping("/user/{id}")
 	public ProfileResponseUser getUserById(@PathVariable Long id) throws ServiceException {
 		LOGGER.info("Getting users with id: {}", id);
 		User u = userRepo.findOne(id);
@@ -71,7 +72,7 @@ public class ProfileController {
 			@ApiResponse(code = 200, message = "Users are found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 404, message = "Users are not found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
-	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@GetMapping("/user")
 	public ProfileResponseUserList searchUsersByName(@RequestParam(value = "name", required = true) String name)
 			throws ServiceException {
 		LOGGER.info("Getting users with name like: {}", name);
@@ -81,13 +82,13 @@ public class ProfileController {
 		}
 		return new ProfileResponseUserList(users);
 	}
-	
+
 	@ApiOperation(value = "getAllUsers", notes = "Get all users", tags = { "Profile" })
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Users are found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 404, message = "Users are not found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
-	@RequestMapping(value = "/allusers", method = RequestMethod.GET)
+	@GetMapping("/allusers")
 	public ProfileResponseUserList getAllUsers() throws ServiceException {
 		List<User> users = userRepo.findAll();
 		if (Validators.isEmpty(users)) {
@@ -100,7 +101,7 @@ public class ProfileController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Profile has been updated.", response = ProfileResponseUser.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUser.class) })
-	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	@PostMapping("/user")
 	public ProfileResponseUser saveUserProfile(
 			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto)
 			throws ServiceException {
