@@ -82,10 +82,6 @@
             <version>5.1.42</version>
             <!--$NO-MVN-MAN-VER$ -->
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
         <!-- Maven Antrun plugin -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
