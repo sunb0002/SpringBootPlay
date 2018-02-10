@@ -1,21 +1,18 @@
 package com.madoka.sunb0002.springbootdemo.config;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * @author Sun Bo
- *
+ * @see SpringBoot WebMvcAutoConfiguration will do @EnableWebMvc
+ *      and @ComponentScan itself.
  */
 @Configuration
-@EnableWebMvc
-@ComponentScan({ "com.madoka.sunb0002.springbootdemo.webapi.*", "com.madoka.sunb0002.springbootdemo.services.impl" })
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Override
