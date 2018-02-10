@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 
 import io.swagger.annotations.Api;
@@ -36,6 +37,7 @@ public class HomeController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200")
+	@LogAnno
 	public HomeResponse allHail() {
 
 		HomeResponse hr = new HomeResponse(200, appName, "All Hail Madoka");

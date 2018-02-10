@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
@@ -58,6 +59,7 @@ public class ProfileController {
 			@ApiResponse(code = 404, message = "User is not found.", response = ProfileResponseUser.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUser.class) })
 	@GetMapping("/user/{id}")
+	@LogAnno("Anno-getUserById")
 	public ProfileResponseUser getUserById(@PathVariable Long id) throws ServiceException {
 		LOGGER.info("Getting users with id: {}", id);
 		User u = userRepo.findOne(id);
@@ -73,6 +75,7 @@ public class ProfileController {
 			@ApiResponse(code = 404, message = "Users are not found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
 	@GetMapping("/user")
+	@LogAnno("Anno-searchUsersByName")
 	public ProfileResponseUserList searchUsersByName(@RequestParam(value = "name", required = true) String name)
 			throws ServiceException {
 		LOGGER.info("Getting users with name like: {}", name);
@@ -89,6 +92,7 @@ public class ProfileController {
 			@ApiResponse(code = 404, message = "Users are not found.", response = ProfileResponseUserList.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
 	@GetMapping("/allusers")
+	@LogAnno("Anno-getAllUsers")
 	public ProfileResponseUserList getAllUsers() throws ServiceException {
 		List<User> users = userRepo.findAll();
 		if (Validators.isEmpty(users)) {
@@ -102,6 +106,7 @@ public class ProfileController {
 			@ApiResponse(code = 200, message = "Profile has been updated.", response = ProfileResponseUser.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUser.class) })
 	@PostMapping("/user")
+	@LogAnno("Anno-saveUserProfile")
 	public ProfileResponseUser saveUserProfile(
 			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto)
 			throws ServiceException {

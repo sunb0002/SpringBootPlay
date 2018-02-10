@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 import com.madoka.sunb0002.springbootdemo.repositories.UserRepository;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(value = "sbshop-txnmgr", readOnly = true)
+	@LogAnno("Anno-Service-getSomeUsersWithSimilarName")
 	public List<UserDTO> getSomeUsersWithSimilarName(String name) {
 		LOGGER.info("Service is searching users with name like: {}", name);
 		return dtoParserSvc.parseUsers(userRepo.findNricByNameLikeUsingQuery(name));
