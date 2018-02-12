@@ -4,7 +4,6 @@
 package com.madoka.sunb0002.springbootdemo.common.cron;
 
 import java.util.Date;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,8 @@ import com.madoka.sunb0002.springbootdemo.services.UserService;
 
 /**
  * @author Sun Bo
- * @see @Scheduled is a simple cronjob setting. If you have multiple instances,
- *      still need to use Quartz.
+ * @see @Scheduled is a simple cronjob setting. If got multiple instances, still
+ *      need to use Quartz.
  * @see fixedRate & fixedDelay both runs at specified interval. But fixedRate
  *      will not wait for previous execution to complete.
  *
@@ -31,18 +30,16 @@ public class ScheduledTasks {
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 120 * 1000)
 	@LogAnno
 	public void reportCurrentTime() {
-		LOGGER.info("Current Time: {}", new Date());
+		LOGGER.info("reportCurrentTime: {}", new Date());
 	}
 
-	@Scheduled(fixedDelay = 10000)
-	@LogAnno
-	public void getRandomUser() {
-		Random r = new Random();
-		char c = (char) (r.nextInt(26) + 'a');
-		LOGGER.info("Trying to get user with char={}, result={}", c, userService.getSomeUsersWithSimilarName(c + ""));
+	@Scheduled(fixedDelay = 60 * 1000)
+	public void printRandomUser() {
+		reportCurrentTime();
+		userService.getRandomUser();
 	}
 
 }

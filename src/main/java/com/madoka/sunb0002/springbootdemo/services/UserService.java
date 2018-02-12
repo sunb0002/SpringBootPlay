@@ -4,6 +4,7 @@
 package com.madoka.sunb0002.springbootdemo.services;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
@@ -27,5 +28,22 @@ public interface UserService {
 	 * @return
 	 */
 	UserDTO saveUserProfile(UserDTO userDto) throws ServiceException;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	List<UserDTO> getRandomUser();
+	
+	/**
+	 * 
+	 */
+	void asyncTask();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	Future<String> asyncTaskWithFuture();
 
 }

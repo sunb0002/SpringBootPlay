@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
+import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
 import com.madoka.sunb0002.springbootdemo.repositories.entities.User;
 import com.madoka.sunb0002.springbootdemo.services.DtoParserService;
 
@@ -33,8 +34,10 @@ public class DtoParserServiceImpl implements DtoParserService {
 	@Override
 	public List<UserDTO> parseUsers(List<User> users) {
 		List<UserDTO> dtos = new ArrayList<>();
-		for (User user : users) {
-			dtos.add(parseUser(user));
+		if (!Validators.isEmpty(users)) {
+			for (User user : users) {
+				dtos.add(parseUser(user));
+			}
 		}
 		return dtos;
 	}

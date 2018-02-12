@@ -5,6 +5,7 @@ package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.services.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,16 +32,18 @@ public class HomeController {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+	@Autowired
+	private UserService userService;
+
 	@Value("${app.name}")
 	private String appName;
 
 	@ApiOperation(value = "allHail", notes = "Get successful message", tags = { "Internal" })
-	@ApiResponses(value = {
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200")
 	@LogAnno
 	public HomeResponse allHail() {
-
 		HomeResponse hr = new HomeResponse(200, appName, "All Hail Madoka");
 		LOGGER.info("waifu here info.");
 		LOGGER.error("waifu here error.");
@@ -54,6 +58,16 @@ public class HomeController {
 	@GetMapping("/json403")
 	public HomeResponse test() throws ServiceException {
 		throw new ServiceException(HttpStatus.FORBIDDEN.value(), "forbidden liao");
+	}
+
+	@ApiOperation(value = "testAnything", notes = "Get successful message", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/json200MK2")
+	@LogAnno
+	public HomeResponse testAnything() {
+		userService.asyncTask();
+		return new HomeResponse(200, appName, "All tests done.");
 	}
 
 }

@@ -5,10 +5,13 @@ package com.madoka.sunb0002.springbootdemo.services.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +66,29 @@ public class UserServiceImpl implements UserService {
 
 		u = userRepo.save(u);
 		return dtoParserSvc.parseUser(u);
+	}
+
+	@Override
+	public List<UserDTO> getRandomUser() {
+		Random r = new Random();
+		char c = (char) (r.nextInt(26) + 'a');
+		List<UserDTO> result = getSomeUsersWithSimilarName(c + "");
+		LOGGER.info("Fetched user with char={}, result={}", c, result);
+		return result;
+	}
+
+	@Override
+	@Async("Async-Executor2")
+	@LogAnno("Anno-Service-asyncTask")
+	public void asyncTask() {
+		LOGGER.info("AsyncTask reporting.");
+		LOGGER.info("Retrieved {} users.", getRandomUser().size());
+	}
+
+	@Override
+	public Future<String> asyncTaskWithFuture() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
