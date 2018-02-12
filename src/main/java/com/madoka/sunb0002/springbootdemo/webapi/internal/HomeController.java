@@ -3,6 +3,10 @@
  */
 package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +48,10 @@ public class HomeController {
 	@GetMapping("/json200")
 	@LogAnno
 	public HomeResponse allHail() {
-		HomeResponse hr = new HomeResponse(200, appName, "All Hail Madoka");
 		LOGGER.info("waifu here info.");
 		LOGGER.error("waifu here error.");
 		LOGGER.debug("waifu here debug.");
-		return hr;
+		return new HomeResponse(200, appName, "All Hail Madoka");
 	}
 
 	@ApiOperation(value = "test", notes = "Get unsuccessful message", tags = { "Internal" })
@@ -64,10 +67,18 @@ public class HomeController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200MK2")
-	@LogAnno
-	public HomeResponse testAnything() {
-		userService.asyncTask();
-		return new HomeResponse(200, appName, "All tests done.");
+	@LogAnno("Anno-testAnything")
+	public HomeResponse testAnything() throws InterruptedException, ExecutionException {
+
+		// userService.asyncTask();
+		LOGGER.info("AsyncTask start: {}", new Date());
+		Future<String> futureStr = userService.asyncTaskWithFuture();
+
+		// Can also use "while futureStr.isDone()" below.
+		String result = futureStr.get();
+
+		LOGGER.info("AsyncTask done: {}", new Date());
+		return new HomeResponse(200, appName, "All tests done: " + result);
 	}
 
 }

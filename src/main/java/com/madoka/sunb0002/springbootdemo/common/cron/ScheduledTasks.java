@@ -30,13 +30,13 @@ public class ScheduledTasks {
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(fixedRate = 120 * 1000)
+	@Scheduled(fixedRate = 240 * 1000)
 	@LogAnno
 	public void reportCurrentTime() {
 		LOGGER.info("reportCurrentTime: {}", new Date());
 	}
 
-	@Scheduled(fixedDelay = 60 * 1000)
+	@Scheduled(fixedDelay = 120 * 1000)
 	public void printRandomUser() {
 		reportCurrentTime();
 		userService.getRandomUser();

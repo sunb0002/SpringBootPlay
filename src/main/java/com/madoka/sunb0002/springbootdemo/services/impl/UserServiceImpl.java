@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,9 +87,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Future<String> asyncTaskWithFuture() {
-		// TODO Auto-generated method stub
-		return null;
+	@Async("Async-Executor1")
+	@LogAnno("Anno-Service-asyncTaskWithFuture")
+	public Future<String> asyncTaskWithFuture() throws InterruptedException {
+		int result = getRandomUser().size();
+		Thread.sleep(2500);
+		return new AsyncResult<String>("Retrieved so many users: " + result);
 	}
 
 }

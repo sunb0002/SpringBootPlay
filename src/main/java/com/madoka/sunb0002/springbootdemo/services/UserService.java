@@ -28,22 +28,22 @@ public interface UserService {
 	 * @return
 	 */
 	UserDTO saveUserProfile(UserDTO userDto) throws ServiceException;
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	List<UserDTO> getRandomUser();
-	
+
 	/**
 	 * 
 	 */
 	void asyncTask();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	Future<String> asyncTaskWithFuture();
+	Future<String> asyncTaskWithFuture() throws InterruptedException;
 
 }

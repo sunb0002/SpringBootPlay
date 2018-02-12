@@ -32,6 +32,7 @@ public class AsyncConfig {
 		tpte.setCorePoolSize(corePoolSize);
 		tpte.setQueueCapacity(queueCapacity);
 		tpte.setMaxPoolSize(maxPoolSize);
+		tpte.setThreadPriority(Thread.MIN_PRIORITY);
 		return tpte;
 	}
 
