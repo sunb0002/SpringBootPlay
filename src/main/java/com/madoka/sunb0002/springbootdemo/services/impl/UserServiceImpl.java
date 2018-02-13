@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(value = "sbshop-txnmgr", readOnly = true)
 	@LogAnno("Anno-Service-getSomeUsersWithSimilarName")
+	@Cacheable(cacheNames = "qbCache", condition = "#name.length() < 10")
 	public List<UserDTO> getSomeUsersWithSimilarName(String name) {
 		LOGGER.info("Service is searching users with name like: {}", name);
 		return dtoParserSvc.parseUsers(userRepo.findNricByNameLikeUsingQuery(name));
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional("sbshop-txnmgr")
+	@CachePut(cacheNames = "qbCache", key = "#userDto.name")
 	public UserDTO saveUserProfile(UserDTO userDto) throws ServiceException {
 
 		User u = new User();
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Cacheable("qbCache")
 	public List<UserDTO> getRandomUser() {
 		Random r = new Random();
 		char c = (char) (r.nextInt(26) + 'a');
