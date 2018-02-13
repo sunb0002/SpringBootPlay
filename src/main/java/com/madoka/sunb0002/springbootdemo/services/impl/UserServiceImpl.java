@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 		LOGGER.info("AsyncTask reporting.");
 		LOGGER.info("Retrieved {} users.", getRandomUser().size());
 		// throw new
-		// InterruptedException("Test...AsyncUncaughtExceptionHandler!");
+		// InterruptedException("Test...AsyncUncaughtExceptionHandler!"); //NOSONAR
 	}
 
 	@Override

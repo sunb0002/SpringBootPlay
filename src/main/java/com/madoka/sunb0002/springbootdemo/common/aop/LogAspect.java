@@ -36,7 +36,7 @@ public class LogAspect {
 	 * separately.
 	 * 
 	 * @Pointcut("@annotation(logAnno)") private void isLogAnno(LogAnno logAnno)
-	 * { };
+	 * { }; //NOSONAR
 	 */
 
 	@Pointcut("execution(public * com.madoka..HomeController.allH*(..))")
@@ -57,12 +57,12 @@ public class LogAspect {
 
 	@Before("isService() && @annotation(anno)")
 	public void doBefore1(JoinPoint jp, LogAnno anno) {
-		LOGGER.debug("AOP-doBefore1: annoValue={}", anno.value());
+		LOGGER.debug("AOP-doBefore1: annoValue={}", anno.value()); // NOSONAR
 		LOGGER.debug("AOP-doBefore1: signature={}, args={}", jp.getSignature(), jp.getArgs());
 		// LOGGER.debug("AOP-doBefore1: sigShortStr={}, sigName={},
 		// targetClass={}, args={}", jp.getSignature().toShortString(),
 		// jp.getSignature().getName(), jp.getTarget().getClass().getName(),
-		// jp.getArgs());
+		// jp.getArgs()); //NOSONAR
 		// AOP-doBefore1:
 		// sigShortStr=UserService.getSomeUsersWithSimilarName(..),
 		// sigName=getSomeUsersWithSimilarName,

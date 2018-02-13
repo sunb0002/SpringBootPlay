@@ -70,7 +70,7 @@ public class HomeController {
 	@LogAnno("Anno-testAnything")
 	public HomeResponse testAnything() throws InterruptedException, ExecutionException {
 
-		// userService.asyncTask();
+		// userService.asyncTask(); //NOSONAR
 		LOGGER.info("AsyncTask start: {}", new Date());
 		Future<String> futureStr = userService.asyncTaskWithFuture();
 

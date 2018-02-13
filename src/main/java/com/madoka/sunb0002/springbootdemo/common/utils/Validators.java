@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Validators {
 
+	private Validators() {
+	}
+
 	/** Check whether string s is null */
 	public static boolean isNull(Object s) {
 		return s == null;
