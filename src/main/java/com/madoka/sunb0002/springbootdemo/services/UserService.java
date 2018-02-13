@@ -38,7 +38,7 @@ public interface UserService {
 	/**
 	 * 
 	 */
-	void asyncTask();
+	void asyncTask() throws InterruptedException;
 
 	/**
 	 * 

@@ -79,15 +79,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Async("Async-Executor2")
+	@Async("Async-Executor1")
 	@LogAnno("Anno-Service-asyncTask")
-	public void asyncTask() {
+	public void asyncTask() throws InterruptedException {
 		LOGGER.info("AsyncTask reporting.");
 		LOGGER.info("Retrieved {} users.", getRandomUser().size());
+		// throw new
+		// InterruptedException("Test...AsyncUncaughtExceptionHandler!");
 	}
 
 	@Override
-	@Async("Async-Executor1")
+	@Async("Async-Executor2")
 	@LogAnno("Anno-Service-asyncTaskWithFuture")
 	public Future<String> asyncTaskWithFuture() throws InterruptedException {
 		int result = getRandomUser().size();
