@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
-import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 
 /**
  * @author Sun Bo
@@ -27,7 +26,7 @@ public interface UserService {
 	 * @param userDto
 	 * @return
 	 */
-	UserDTO saveUserProfile(UserDTO userDto) throws ServiceException;
+	UserDTO saveUserProfile(UserDTO userDto);
 
 	/**
 	 * 

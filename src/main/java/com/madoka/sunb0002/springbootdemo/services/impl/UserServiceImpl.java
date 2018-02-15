@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional("sbshop-txnmgr")
 	@CachePut(cacheNames = "qbCache", key = "#userDto.name")
-	public UserDTO saveUserProfile(UserDTO userDto) throws ServiceException {
+	public UserDTO saveUserProfile(UserDTO userDto) {
 
 		User u = new User();
 		Long uid = userDto.getUserId();
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 	public Future<String> asyncTaskWithFuture() throws InterruptedException {
 		int result = getRandomUser().size();
 		Thread.sleep(2500);
-		return new AsyncResult<String>("Retrieved so many users: " + result);
+		return new AsyncResult<>("Retrieved so many users: " + result);
 	}
 
 }
