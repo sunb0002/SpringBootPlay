@@ -80,11 +80,11 @@ public class AsyncConfig implements AsyncConfigurer {
  */
 class myAsUncaughtExHandler implements AsyncUncaughtExceptionHandler {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public void handleUncaughtException(Throwable arg0, Method arg1, Object... arg2) {
-		LOGGER.error("Async Uncaught Exception, ExMsg={}, MethodName={}", arg0.getMessage(), arg1.getName());
+		logger.error("Async Uncaught Exception, ExMsg={}, MethodName={}", arg0.getMessage(), arg1.getName());
 	}
 
 }

@@ -23,7 +23,7 @@ import com.madoka.sunb0002.springbootdemo.services.MailService;
 @Service
 public class MailServiceImpl implements MailService {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private JavaMailSender mailSender;
@@ -35,7 +35,7 @@ public class MailServiceImpl implements MailService {
 	public void sendSimpleMail() {
 
 		SimpleMailMessage msg = new SimpleMailMessage();
-		LOGGER.debug("Checking mailSender implementation: {}--{}--{}", mailSenderImpl.getHost(),
+		logger.debug("Checking mailSender implementation: {}--{}--{}", mailSenderImpl.getHost(),
 				mailSenderImpl.getPort(), mailSenderImpl.getJavaMailProperties());
 
 		msg.setFrom("incubator@madoka.com");
@@ -45,7 +45,7 @@ public class MailServiceImpl implements MailService {
 		msg.setText("I will make all your wishes come true!");
 		msg.setSentDate(new Date());
 
-		LOGGER.debug("Sending email: {}", msg);
+		logger.debug("Sending email: {}", msg);
 		mailSender.send(msg);
 	}
 

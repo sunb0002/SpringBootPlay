@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/profile")
 public class ProfileController {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserService userService;
@@ -61,7 +61,7 @@ public class ProfileController {
 	@GetMapping("/user/{id}")
 	@LogAnno("Anno-getUserById")
 	public ProfileResponseUser getUserById(@PathVariable Long id) throws ServiceException {
-		LOGGER.info("Getting users with id: {}", id);
+		logger.info("Getting users with id: {}", id);
 		User u = userRepo.findOne(id);
 		if (u == null) {
 			throw new ServiceException(HttpStatus.NOT_FOUND.value(), "No magical girl with id=" + id);
@@ -78,7 +78,7 @@ public class ProfileController {
 	@LogAnno("Anno-searchUsersByName")
 	public ProfileResponseUserList searchUsersByName(@RequestParam(value = "name", required = true) String name)
 			throws ServiceException {
-		LOGGER.info("Getting users with name like: {}", name);
+		logger.info("Getting users with name like: {}", name);
 		List<UserDTO> users = userService.getSomeUsersWithSimilarName(name);
 		if (Validators.isEmpty(users)) {
 			throw new ServiceException(HttpStatus.NOT_FOUND.value(), "No magical girl(s) with name like: " + name);
@@ -110,7 +110,7 @@ public class ProfileController {
 	public ProfileResponseUser saveUserProfile(
 			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto)
 			throws ServiceException {
-		LOGGER.info("To SaveOrUpdate user profile: {}", userDto);
+		logger.info("To SaveOrUpdate user profile: {}", userDto);
 		try {
 			userDto = userService.saveUserProfile(userDto);
 		} catch (Exception e) {

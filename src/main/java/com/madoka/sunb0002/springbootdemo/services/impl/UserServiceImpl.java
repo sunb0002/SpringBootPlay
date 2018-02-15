@@ -33,7 +33,7 @@ import com.madoka.sunb0002.springbootdemo.services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserRepository userRepo;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	@LogAnno("Anno-Service-getSomeUsersWithSimilarName")
 	@Cacheable(cacheNames = "qbCache", condition = "#name.length() < 10")
 	public List<UserDTO> getSomeUsersWithSimilarName(String name) {
-		LOGGER.info("Service is searching users with name like: {}", name);
+		logger.info("Service is searching users with name like: {}", name);
 		return dtoParserSvc.parseUsers(userRepo.findNricByNameLikeUsingQuery(name));
 	}
 
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		Random r = new Random();
 		char c = (char) (r.nextInt(26) + 'a');
 		List<UserDTO> result = getSomeUsersWithSimilarName(c + "");
-		LOGGER.info("Fetched user with char={}, result={}", c, result);
+		logger.info("Fetched user with char={}, result={}", c, result);
 		return result;
 	}
 
@@ -87,8 +87,8 @@ public class UserServiceImpl implements UserService {
 	@Async("Async-Executor1")
 	@LogAnno("Anno-Service-asyncTask")
 	public void asyncTask() throws InterruptedException {
-		LOGGER.info("AsyncTask reporting.");
-		LOGGER.info("Retrieved {} users.", getRandomUser().size());
+		logger.info("AsyncTask reporting.");
+		logger.info("Retrieved {} users.", getRandomUser().size());
 		// throw new
 		// InterruptedException("Test...AsyncUncaughtExceptionHandler!"); //NOSONAR
 	}

@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/")
 public class HomeController {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserService userService;
@@ -52,9 +52,9 @@ public class HomeController {
 	@GetMapping("/json200")
 	@LogAnno
 	public HomeResponse allHail() {
-		LOGGER.info("waifu here info.");
-		LOGGER.error("waifu here error.");
-		LOGGER.debug("waifu here debug.");
+		logger.info("waifu here info.");
+		logger.error("waifu here error.");
+		logger.debug("waifu here debug.");
 		return new HomeResponse(200, appName, "All Hail Madoka");
 	}
 
@@ -84,13 +84,13 @@ public class HomeController {
 	public HomeResponse testAnything() throws InterruptedException, ExecutionException {
 
 		// userService.asyncTask(); //NOSONAR
-		LOGGER.info("AsyncTask start: {}", new Date());
+		logger.info("AsyncTask start: {}", new Date());
 		Future<String> futureStr = userService.asyncTaskWithFuture();
 
 		// Can also use "while futureStr.isDone()" below.
 		String result = futureStr.get();
 
-		LOGGER.info("AsyncTask done: {}", new Date());
+		logger.info("AsyncTask done: {}", new Date());
 		return new HomeResponse(200, appName, "All tests done: " + result);
 	}
 

@@ -25,18 +25,18 @@ import com.madoka.sunb0002.springbootdemo.services.UserService;
 @Service
 public class ScheduledTasks {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(fixedRate = 240 * 1000)
+	@Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 10 * 60 * 1000)
 	@LogAnno
 	public void reportCurrentTime() {
-		LOGGER.info("reportCurrentTime: {}", new Date());
+		logger.info("reportCurrentTime: {}", new Date());
 	}
 
-	@Scheduled(fixedDelay = 120 * 1000)
+	@Scheduled(initialDelay = 10 * 60 * 1000, fixedDelay = 20 * 60 * 1000)
 	public void printRandomUser() {
 		reportCurrentTime();
 		userService.getRandomUser();

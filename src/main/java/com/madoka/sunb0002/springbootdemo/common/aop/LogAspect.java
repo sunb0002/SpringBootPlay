@@ -25,7 +25,7 @@ import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 @Service
 public class LogAspect {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Pointcut("within(com.madoka..services..*)")
 	private void isService() {
@@ -57,9 +57,9 @@ public class LogAspect {
 
 	@Before("isService() && @annotation(anno)")
 	public void doBefore1(JoinPoint jp, LogAnno anno) {
-		LOGGER.debug("AOP-doBefore1: annoValue={}", anno.value()); // NOSONAR
-		LOGGER.debug("AOP-doBefore1: signature={}, args={}", jp.getSignature(), jp.getArgs());
-		// LOGGER.debug("AOP-doBefore1: sigShortStr={}, sigName={},
+		logger.debug("AOP-doBefore1: annoValue={}", anno.value()); // NOSONAR
+		logger.debug("AOP-doBefore1: signature={}, args={}", jp.getSignature(), jp.getArgs());
+		// logger.debug("AOP-doBefore1: sigShortStr={}, sigName={},
 		// targetClass={}, args={}", jp.getSignature().toShortString(),
 		// jp.getSignature().getName(), jp.getTarget().getClass().getName(),
 		// jp.getArgs()); //NOSONAR
@@ -72,24 +72,24 @@ public class LogAspect {
 
 	@Before("isProfileApiMultiUsers()")
 	public void doBefore2(JoinPoint jp) {
-		LOGGER.debug("AOP-doBefore2: signature={}, args={}", jp.getSignature(), jp.getArgs());
+		logger.debug("AOP-doBefore2: signature={}, args={}", jp.getSignature(), jp.getArgs());
 	}
 
 	@After("isProfileApiOneUser()")
 	public void doAfter(JoinPoint jp) {
-		LOGGER.debug("AOP-doAfter: signature={}, args={}", jp.getSignature(), jp.getArgs());
+		logger.debug("AOP-doAfter: signature={}, args={}", jp.getSignature(), jp.getArgs());
 	}
 
 	@AfterThrowing(pointcut = "isInternalApi403()", throwing = "se")
 	public void doAfterThrow(JoinPoint jp, ServiceException se) {
-		LOGGER.debug("AOP-doAfterThrow: signature={}, exMsg={}", jp.getSignature(), se.getMessage());
+		logger.debug("AOP-doAfterThrow: signature={}, exMsg={}", jp.getSignature(), se.getMessage());
 	}
 
 	@Around("isInternalApi200()")
 	public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
-		LOGGER.debug("AOP-doAround: signature={}", pjp.getSignature());
+		logger.debug("AOP-doAround: signature={}", pjp.getSignature());
 		Object retVal = pjp.proceed();
-		LOGGER.debug("AOP-doAround: retVal={}", retVal);
+		logger.debug("AOP-doAround: retVal={}", retVal);
 		return retVal;
 	}
 
