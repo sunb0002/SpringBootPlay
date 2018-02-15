@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.services.MailService;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
 
 import io.swagger.annotations.Api;
@@ -39,6 +40,9 @@ public class HomeController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private MailService mailService;
+
 	@Value("${app.name}")
 	private String appName;
 
@@ -59,11 +63,20 @@ public class HomeController {
 			@ApiResponse(code = 404, message = "Got forbidden.", response = HomeResponse.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = HomeResponse.class) })
 	@GetMapping("/json403")
-	public HomeResponse test() throws ServiceException {
+	public HomeResponse test() {
 		throw new ServiceException(HttpStatus.FORBIDDEN.value(), "forbidden liao");
 	}
 
-	@ApiOperation(value = "testAnything", notes = "Get successful message", tags = { "Internal" })
+	@ApiOperation(value = "testMail", notes = "Test sending email", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/json200Mail")
+	public HomeResponse testMail() {
+		mailService.sendSimpleMail();
+		return new HomeResponse(200, appName, "Mail has been sent.");
+	}
+
+	@ApiOperation(value = "testAnything", notes = "Test anything", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200MK2")

@@ -6,5 +6,5 @@ http://start.spring.io/
 
 CMDs:
 mvn spring-boot:run
-mvn surefire:test
+mvn surefire:test -DskipTests=false
 mvn clean package
