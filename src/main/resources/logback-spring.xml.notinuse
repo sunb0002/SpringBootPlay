@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="120 seconds" debug="false">
-
-	
+    <!-- SpringBoot natively support logback-spring.xml (not logback.xml) with springProfile -->
+    <!-- For log4j2 or other loggers, at least can play by putting "logging.config=xxx.xml" in application-myprofile.properties. -->
+    <springProfile name="staging">
+        <!-- configuration to be enabled when the "staging" profile is active -->
+        <!-- <include resource="logback-staging.xml"/> -->
+    </springProfile>
+    <springProfile name="dev, staging">
+        <!-- configuration to be enabled when the "dev" or "staging" profiles are active -->
+    </springProfile>
+    <springProfile name="!production">
+        <!-- configuration to be enabled when the "production" profile is not active -->
+    </springProfile>
 </configuration>
