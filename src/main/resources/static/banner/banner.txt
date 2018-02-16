@@ -1,0 +1,3 @@
+~There is no goddess but Madoka and Kyouko is her Messenger~
+spring-boot.version=${spring-boot.version}
+
