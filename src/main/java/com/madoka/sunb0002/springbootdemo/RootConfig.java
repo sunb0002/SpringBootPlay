@@ -27,6 +27,7 @@ public class RootConfig {
 	 * Activates the new configuration service which supports converting String
 	 * to Collection types.
 	 * 
+	 * @note: SpringBoot will NOT create this bean by default.
 	 * @return ConversionService
 	 */
 	@Bean

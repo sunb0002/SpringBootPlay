@@ -1,6 +1,13 @@
 package com.madoka.sunb0002.springbootdemo.config;
 
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -14,6 +21,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+	// To verify whether this bean has been created in RootConfig.
+	@Autowired
+	private ConversionService conversionService;
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -37,11 +50,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 	/**
 	 * SpringBoot properties endpoints.cors.* are used by Actuator endpoints
-	 * only, you HAVE TO use JavaConfig to set the global CORS congfiguration.
+	 * only, so still HAVE TO use JavaConfig to set the global CORS
+	 * congfiguration.
 	 */
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+	}
+
+	@PostConstruct
+	public void verifyConfigs() {
+		logger.debug("Has ConversionService(DefaultConversionService) been created by SpringBoot: {}",
+				conversionService instanceof DefaultConversionService);
 	}
 
 }
