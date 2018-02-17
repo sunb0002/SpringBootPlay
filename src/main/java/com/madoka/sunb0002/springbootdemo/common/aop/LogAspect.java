@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
@@ -23,12 +24,13 @@ import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
  */
 @Aspect
 @Service
+@Profile("!test")
 public class LogAspect {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Pointcut("within(com.madoka..services..*)")
-	private void isService() {
+	private void isService() { //NOSONAR
 	};
 
 	/*
