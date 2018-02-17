@@ -60,7 +60,7 @@ public class ProfileController {
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUser.class) })
 	@GetMapping("/user/{id}")
 	@LogAnno("Anno-getUserById")
-	public ProfileResponseUser getUserById(@PathVariable Long id) throws ServiceException {
+	public ProfileResponseUser getUserById(@PathVariable Long id) {
 		logger.info("Getting users with id: {}", id);
 		User u = userRepo.findOne(id);
 		if (u == null) {
@@ -76,8 +76,7 @@ public class ProfileController {
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
 	@GetMapping("/user")
 	@LogAnno("Anno-searchUsersByName")
-	public ProfileResponseUserList searchUsersByName(@RequestParam(value = "name", required = true) String name)
-			throws ServiceException {
+	public ProfileResponseUserList searchUsersByName(@RequestParam(value = "name", required = true) String name) {
 		logger.info("Getting users with name like: {}", name);
 		List<UserDTO> users = userService.getSomeUsersWithSimilarName(name);
 		if (Validators.isEmpty(users)) {
@@ -93,7 +92,7 @@ public class ProfileController {
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = ProfileResponseUserList.class) })
 	@GetMapping("/allusers")
 	@LogAnno("Anno-getAllUsers")
-	public ProfileResponseUserList getAllUsers() throws ServiceException {
+	public ProfileResponseUserList getAllUsers() {
 		List<User> users = userRepo.findAll();
 		if (Validators.isEmpty(users)) {
 			throw new ServiceException(HttpStatus.NOT_FOUND.value(), "No magical girl(s) in database.");
@@ -108,8 +107,7 @@ public class ProfileController {
 	@PostMapping("/user")
 	@LogAnno("Anno-saveUserProfile")
 	public ProfileResponseUser saveUserProfile(
-			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto)
-			throws ServiceException {
+			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto) {
 		logger.info("To SaveOrUpdate user profile: {}", userDto);
 		try {
 			userDto = userService.saveUserProfile(userDto);

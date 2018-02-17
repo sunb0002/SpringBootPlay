@@ -106,6 +106,12 @@
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.8</version>
         </dependency>
+        <!-- H2 in-memory DB -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
