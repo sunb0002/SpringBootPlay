@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,6 +48,8 @@ public class IntegrationTest {
 
 	@Rule
 	public final ExpectedException expectedEx = ExpectedException.none();
+	@Rule
+	public OutputCapture capture = new OutputCapture();
 
 	// Constants
 	private final String userNRIC = "S8877665A";
@@ -137,8 +140,13 @@ public class IntegrationTest {
 		UserDTO userDto = new UserDTO(2018L, userNRIC, userName);
 		String strMsg = "Test StringMsg for destination=" + LocalMessageQueue.HUGTTO_DESTINATION;
 
+		capture.flush();
 		mqProducer.sendStrMsg(strMsg);
+		assertTrue(capture.toString().indexOf(strMsg) > -1);
+
+		capture.flush();
 		mqProducer.sendDtoMsg(userDto);
+		assertTrue(capture.toString().indexOf(userNRIC) > -1);
 
 		Object msg1 = mqConsumer.receiveAdhocMsg(LocalMessageQueue.HUGTTO_DESTINATION);
 		assertTrue(msg1 instanceof String);
