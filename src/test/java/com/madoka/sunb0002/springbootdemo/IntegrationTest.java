@@ -5,8 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.jms.JMSException;
 import javax.sql.DataSource;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,12 +19,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.config.Constants.LocalMessageQueue;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
+import com.madoka.sunb0002.springbootdemo.services.jms.Consumer;
+import com.madoka.sunb0002.springbootdemo.services.jms.Producer;
 import com.madoka.sunb0002.springbootdemo.webapi.internal.HomeController;
 import com.madoka.sunb0002.springbootdemo.webapi.internal.HomeResponse;
 import com.madoka.sunb0002.springbootdemo.webapi.profile.ProfileController;
@@ -32,7 +39,7 @@ import com.madoka.sunb0002.springbootdemo.webapi.profile.ProfileController;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class IntegrationTest {
 
@@ -50,6 +57,8 @@ public class IntegrationTest {
 	private String appName;
 	@Autowired
 	private DataSource dataSource;
+	@Autowired
+	private JmsListenerEndpointRegistry jmsListenerReg;
 
 	// Controllers
 	@Autowired
@@ -60,6 +69,16 @@ public class IntegrationTest {
 	// Services
 	@Autowired
 	private UserService userSvc;
+	@Autowired
+	private Producer mqProducer;
+	@Autowired
+	private Consumer mqConsumer;
+
+	@Before
+	public void setUp() {
+		// My approach to disable all JmsListeners.
+		jmsListenerReg.destroy();
+	}
 
 	@Test
 	public void checkAppNameAndDataSource() {
@@ -109,6 +128,24 @@ public class IntegrationTest {
 		expectedEx.expect(ServiceException.class);
 		expectedEx.expectMessage("No magical girl");
 		profileCtrler.searchUsersByName("TestNobody");
+	}
+
+	@Test
+	public void testMQ() throws JMSException, InterruptedException {
+		logger.debug("Testing MQ producer and consumer.");
+
+		UserDTO userDto = new UserDTO(2018L, userNRIC, userName);
+		String strMsg = "Test StringMsg for destination=" + LocalMessageQueue.HUGTTO_DESTINATION;
+
+		mqProducer.sendStrMsg(strMsg);
+		mqProducer.sendDtoMsg(userDto);
+
+		Object msg1 = mqConsumer.receiveAdhocMsg(LocalMessageQueue.HUGTTO_DESTINATION);
+		assertTrue(msg1 instanceof String);
+
+		Object msg2 = mqConsumer.receiveAdhocMsg(LocalMessageQueue.HUGTTO_DESTINATION);
+		assertTrue(msg2 instanceof UserDTO);
+		assertEquals(userName, ((UserDTO) msg2).getName());
 	}
 
 }
