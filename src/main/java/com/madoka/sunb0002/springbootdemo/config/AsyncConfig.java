@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,6 +27,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private int corePoolSize = 2; // Minimum
 	private int queueCapacity = 2; // Active, make new threads waiting
@@ -55,14 +58,21 @@ public class AsyncConfig implements AsyncConfigurer {
 				return t;
 			}
 		};
-		ExecutorService es = Executors.newFixedThreadPool(queueCapacity, myThreadFactory);
-		// Want to play with ExecutorService.
+		ExecutorService es = Executors.newFixedThreadPool(queueCapacity, myThreadFactory); // NOSONAR
+		// Want to play with ExecutorService before return.
 		return es;
+	}
+
+	@Bean("Test-Conditional-Executor")
+	@ConditionalOnProperty(prefix = "spring", name = "profiles.active", havingValue = "dev1")
+	public Executor executor3() {
+		logger.debug("Condition is met, creating executor3 bean.");
+		return Executors.newCachedThreadPool();
 	}
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return new myAsUncaughtExHandler();
+		return new MyAsUncaughtExHandler();
 	}
 
 }
@@ -78,7 +88,7 @@ public class AsyncConfig implements AsyncConfigurer {
  * @author Sun Bo
  *
  */
-class myAsUncaughtExHandler implements AsyncUncaughtExceptionHandler {
+class MyAsUncaughtExHandler implements AsyncUncaughtExceptionHandler {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -20,7 +20,8 @@ import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 
 /**
  * @author Sun Bo
- *
+ * @note: Only takes effect for Non-Testing profiles. Implement @Conditional
+ *        instead of @Profile for better controls.
  */
 @Aspect
 @Service
@@ -30,7 +31,7 @@ public class LogAspect {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Pointcut("within(com.madoka..services..*)")
-	private void isService() { //NOSONAR
+	private void isService() { // NOSONAR
 	};
 
 	/*

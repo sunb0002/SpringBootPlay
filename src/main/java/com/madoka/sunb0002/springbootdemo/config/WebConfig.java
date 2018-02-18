@@ -1,10 +1,13 @@
 package com.madoka.sunb0002.springbootdemo.config;
 
+import java.util.concurrent.Executor;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -24,9 +27,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	// To verify whether this bean has been created in RootConfig.
-	@Autowired
+	// To verify whether beans have been created.
+	@Autowired(required = false)
 	private ConversionService conversionService;
+	@Autowired(required = false)
+	@Qualifier("Test-Conditional-Executor")
+	private Executor testExecutor;
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -60,8 +66,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 	@PostConstruct
 	public void verifyConfigs() {
-		logger.debug("Has ConversionService(DefaultConversionService) been created by SpringBoot: {}",
+		logger.debug("***Has ConversionService(DefaultConversionService) been created by SpringBoot: {}",
 				conversionService instanceof DefaultConversionService);
+		logger.debug("***Has Test-Conditional-Executor been created: {}", testExecutor != null);
 	}
 
 }
