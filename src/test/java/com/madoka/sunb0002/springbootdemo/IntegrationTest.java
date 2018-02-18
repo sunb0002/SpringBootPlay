@@ -76,7 +76,7 @@ public class IntegrationTest {
 		logger.debug("Testing HomeController200.");
 		HomeResponse hr200 = homeCtrler.allHail();
 		assertTrue(hr200.getData().indexOf("SpringBoot-TEST") > -1);
-		logger.debug("Testing HomeController403: {}", homeCtrler.test());
+		logger.debug("Testing HomeController403: {}", homeCtrler.test403());
 	}
 
 	@Ignore("Skip, tested already.")

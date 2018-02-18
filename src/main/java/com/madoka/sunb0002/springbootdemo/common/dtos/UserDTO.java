@@ -3,11 +3,18 @@
  */
 package com.madoka.sunb0002.springbootdemo.common.dtos;
 
+import java.io.Serializable;
+
 /**
  * @author Sun Bo
  *
  */
-public class UserDTO {
+public class UserDTO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3979794478820717171L;
 
 	private Long userId;
 	private String nric;

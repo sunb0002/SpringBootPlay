@@ -4,8 +4,11 @@
 package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import javax.jms.JMSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
+import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
 import com.madoka.sunb0002.springbootdemo.services.MailService;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
+import com.madoka.sunb0002.springbootdemo.services.jms.Producer;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,9 +45,10 @@ public class HomeController {
 
 	@Autowired
 	private UserService userService;
-
 	@Autowired
 	private MailService mailService;
+	@Autowired
+	private Producer mqProducer;
 
 	@Value("${app.name}")
 	private String appName;
@@ -58,12 +65,12 @@ public class HomeController {
 		return new HomeResponse(200, appName, "All Hail Madoka");
 	}
 
-	@ApiOperation(value = "test", notes = "Get unsuccessful message", tags = { "Internal" })
+	@ApiOperation(value = "test403", notes = "Get unsuccessful message", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 404, message = "Got forbidden.", response = HomeResponse.class),
 			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = HomeResponse.class) })
 	@GetMapping("/json403")
-	public HomeResponse test() {
+	public HomeResponse test403() {
 		throw new ServiceException(HttpStatus.FORBIDDEN.value(), "forbidden liao");
 	}
 
@@ -74,6 +81,20 @@ public class HomeController {
 	public HomeResponse testMail() {
 		mailService.sendSimpleMail();
 		return new HomeResponse(200, appName, "Mail has been sent.");
+	}
+
+	@ApiOperation(value = "testMQ", notes = "Test Message Queue", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/json200MQ")
+	public HomeResponse testMQ() throws JMSException {
+		mqProducer.sendStrMsg("Test StringMsg sent at: " + new Date());
+		mqProducer.sendDtoMsg(null);
+		List<UserDTO> randomUsers = userService.getRandomUser();
+		UserDTO sendUser = Validators.isEmpty(randomUsers) ? new UserDTO(999L, "S0000111Z", "Hug-tan!")
+				: randomUsers.get(0);
+		mqProducer.sendDtoMsg(sendUser);
+		return new HomeResponse(200, appName, "All MQ messages have been sent.");
 	}
 
 	@ApiOperation(value = "testAnything", notes = "Test anything", tags = { "Internal" })
