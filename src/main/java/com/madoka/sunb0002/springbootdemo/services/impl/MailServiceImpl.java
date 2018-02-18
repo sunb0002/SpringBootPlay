@@ -28,13 +28,12 @@ public class MailServiceImpl implements MailService {
 	@Autowired
 	private JavaMailSender mailSender;
 
-	@Autowired
-	private JavaMailSenderImpl mailSenderImpl;
-
 	@Override
 	public void sendSimpleMail() {
 
 		SimpleMailMessage msg = new SimpleMailMessage();
+
+		JavaMailSenderImpl mailSenderImpl = (JavaMailSenderImpl) mailSender;
 		logger.debug("Checking mailSender implementation: {}--{}--{}", mailSenderImpl.getHost(),
 				mailSenderImpl.getPort(), mailSenderImpl.getJavaMailProperties());
 
