@@ -18,9 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -56,12 +58,16 @@ public class IntegrationTest {
 	private final String userName = "Urobuchi Gen";
 
 	// Configurations
-	@Value("${app.name}")
+	@LocalServerPort
+	private int port; // It's from EmbeddedWebApplicationContext
+	@Value("${app.name:madoka}")
 	private String appName;
 	@Autowired
 	private DataSource dataSource;
 	@Autowired
 	private JmsListenerEndpointRegistry jmsListenerReg;
+	@Autowired
+	private FilterRegistrationBean filterRegBean;
 
 	// Controllers
 	@Autowired
@@ -79,8 +85,12 @@ public class IntegrationTest {
 
 	@Before
 	public void setUp() {
+		// Use @BeforeAll in Junit5 so setUp can run only once!
+		logger.debug("***This testing is running on a radom port={}", port);
 		// My approach to disable all JmsListeners.
 		jmsListenerReg.destroy();
+		// Disable my filter also
+		filterRegBean.setEnabled(false);
 	}
 
 	@Test
