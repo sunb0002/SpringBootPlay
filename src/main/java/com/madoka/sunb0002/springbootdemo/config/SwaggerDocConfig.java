@@ -23,7 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerDocConfig {
 
-	@Value("${app.name}")
+	@Value("${app.name:madoka}")
 	private String appName = null;
 
 	@Value("${app.description}")

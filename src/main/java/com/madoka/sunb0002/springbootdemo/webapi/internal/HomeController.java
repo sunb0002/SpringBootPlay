@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiResponses;
  */
 @Api
 @RestController
-@RequestMapping("/")
+@RequestMapping("/home")
 public class HomeController {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
