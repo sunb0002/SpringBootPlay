@@ -57,7 +57,8 @@ public class SwaggerDocConfig {
 	@Bean
 	public Docket customImplementation() {
 		return new Docket(DocumentationType.SWAGGER_2).useDefaultResponseMessages(false).select()
-				.apis(RequestHandlerSelectors.any()).build().apiInfo(apiInfo()).forCodeGeneration(true);
+				.apis(RequestHandlerSelectors.basePackage("com.madoka.sunb0002.springbootdemo")).build()
+				.apiInfo(apiInfo()).forCodeGeneration(true);
 	}
 
 }
