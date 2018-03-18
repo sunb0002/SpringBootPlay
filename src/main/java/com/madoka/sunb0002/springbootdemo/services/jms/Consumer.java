@@ -11,6 +11,7 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class Consumer {
 	 * @note: JmsListener will block the thread, and performance got issue as
 	 *        document says. Use it carefully.
 	 */
+	@Profile("!test")
 	@JmsListener(id = "HUGTTO", destination = LocalMessageQueue.HUGTTO_DESTINATION)
 	public void receiveMsg(ActiveMQObjectMessage mqObj) throws JMSException {
 
