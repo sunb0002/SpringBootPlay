@@ -10,11 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+
 /**
  * @author Sun Bo
  *
  */
 @Entity
+@Audited
 @Table(schema = "precure", name = "BOOT__SBSHOP_USER")
 public class User extends BaseEntity {
 

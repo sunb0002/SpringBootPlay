@@ -7,14 +7,22 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * @author Sun Bo
  *
  */
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity implements Serializable {
 
 	/**
@@ -26,9 +34,13 @@ public class BaseEntity implements Serializable {
 	@Column(nullable = false)
 	private Long version = 0L;
 
+	@CreatedBy
 	protected Long createdBy;
+	@CreatedDate
 	protected Date createdDate;
+	@LastModifiedBy
 	protected Long modifiedBy;
+	@LastModifiedDate
 	protected Date modifiedDate;
 
 	public Long getCreatedBy() {

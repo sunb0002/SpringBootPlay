@@ -3,7 +3,6 @@
  */
 package com.madoka.sunb0002.springbootdemo.services.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Future;
@@ -62,9 +61,6 @@ public class UserServiceImpl implements UserService {
 			if (u == null) {
 				throw new ServiceException("User with id=" + uid + " is not found, unable to update.");
 			}
-			u.setModifiedDate(new Date());
-		} else {
-			u.setCreatedDate(new Date());
 		}
 		u.setNric(userDto.getNric());
 		u.setName(userDto.getName());
@@ -90,7 +86,8 @@ public class UserServiceImpl implements UserService {
 		logger.info("AsyncTask reporting.");
 		logger.info("Retrieved {} users.", getRandomUser().size());
 		// throw new
-		// InterruptedException("Test...AsyncUncaughtExceptionHandler!"); //NOSONAR
+		// InterruptedException("Test...AsyncUncaughtExceptionHandler!");
+		// //NOSONAR
 	}
 
 	@Override
