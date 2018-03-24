@@ -3,6 +3,7 @@
  */
 package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -10,8 +11,6 @@ import java.util.concurrent.Future;
 
 import javax.jms.JMSException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.common.utils.JwtHelper;
 import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
 import com.madoka.sunb0002.springbootdemo.services.MailService;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
@@ -31,6 +31,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Sun Bo
@@ -39,9 +40,8 @@ import io.swagger.annotations.ApiResponses;
 @Api
 @RestController
 @RequestMapping("/home")
+@Slf4j
 public class HomeController {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserService userService;
@@ -53,15 +53,18 @@ public class HomeController {
 	@Value("${app.name}")
 	private String appName;
 
+	@Value("${app.jwt.secret}")
+	private String jwtKey;
+
 	@ApiOperation(value = "allHail", notes = "Get successful message", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200")
 	@LogAnno
 	public HomeResponse allHail() {
-		logger.info("waifu here info.");
-		logger.error("waifu here error.");
-		logger.debug("waifu here debug.");
+		log.info("waifu here info."); // NOSONAR
+		log.error("waifu here error.");
+		log.debug("waifu here debug.");
 		return new HomeResponse(200, appName, "All Hail Madoka");
 	}
 
@@ -105,14 +108,34 @@ public class HomeController {
 	public HomeResponse testAnything() throws InterruptedException, ExecutionException {
 
 		// userService.asyncTask(); //NOSONAR
-		logger.info("AsyncTask start: {}", new Date());
+		log.info("AsyncTask start: {}", new Date());
 		Future<String> futureStr = userService.asyncTaskWithFuture();
 
 		// Can also use "while futureStr.isDone()" below.
 		String result = futureStr.get();
 
-		logger.info("AsyncTask done: {}", new Date());
+		log.info("AsyncTask done: {}", new Date());
 		return new HomeResponse(200, appName, "All tests done: " + result);
+	}
+
+	@ApiOperation(value = "testJwt", notes = "Test Jwt", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/json200JWT")
+	public HomeResponse testJwt() throws UnsupportedEncodingException {
+
+		String jwt = JwtHelper.createToken("Sakura Kyouko", jwtKey);
+		log.info("Jwt created: {}", jwt);
+		log.info("Parsed from Jwt, name={}", JwtHelper.parseToken(jwt, jwtKey).get("name").asString());
+
+		try {
+			String badJwt = JwtHelper.createToken("Qbey", "bad key");
+			JwtHelper.parseToken(badJwt, jwtKey);
+		} catch (Exception e) {
+			e.printStackTrace(); // NOSONAR
+		}
+
+		return new HomeResponse(200, appName, "Jwt test done.");
 	}
 
 }
