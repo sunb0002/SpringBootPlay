@@ -5,6 +5,8 @@ package com.madoka.sunb0002.springbootdemo.common.utils;
 
 import java.util.List;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * @author Sun Bo
  *
@@ -43,7 +45,7 @@ public class Validators {
 
 	/** Check whether List list is empty */
 	public static boolean isEmpty(List<?> list) {
-		return list == null || list.size() == 0;
+		return ObjectUtils.isEmpty(list);
 	}
 
 	public static boolean isNotEmpty(List<?> list) {

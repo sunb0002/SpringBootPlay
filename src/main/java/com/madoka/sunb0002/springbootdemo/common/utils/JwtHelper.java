@@ -24,6 +24,11 @@ public class JwtHelper {
 	}
 
 	public static String createToken(String name, String key) throws UnsupportedEncodingException {
+		return createToken(name, null, key);
+
+	}
+
+	public static String createToken(String name, Date expiry, String key) throws UnsupportedEncodingException {
 
 		// HMAC
 		Algorithm algo = Algorithm.HMAC256(key);
@@ -35,7 +40,7 @@ public class JwtHelper {
 
 		// Payload claims
 		return JWT.create().withHeader(headerMap).withClaim("name", name).withClaim("profession", "Mahou Shoujo")
-				.withClaim("when", new Date()).sign(algo);
+				.withClaim("when", new Date()).withExpiresAt(expiry).withIssuer("Gen Urobuchi").sign(algo);
 
 	}
 
