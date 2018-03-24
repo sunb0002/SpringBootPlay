@@ -11,7 +11,6 @@ import java.util.Map;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
@@ -40,16 +39,15 @@ public class JwtHelper {
 
 		// Payload claims
 		return JWT.create().withHeader(headerMap).withClaim("name", name).withClaim("profession", "Mahou Shoujo")
-				.withClaim("when", new Date()).withExpiresAt(expiry).withIssuer("Gen Urobuchi").sign(algo);
+				.withClaim("happyTime", new Date()).withExpiresAt(expiry).withIssuer("Gen Urobuchi").sign(algo);
 
 	}
 
-	public static Map<String, Claim> parseToken(String token, String key) throws UnsupportedEncodingException {
+	public static DecodedJWT parseToken(String token, String key) throws UnsupportedEncodingException {
 
 		Algorithm algo = Algorithm.HMAC256(key);
 		JWTVerifier verifier = JWT.require(algo).build();
-		DecodedJWT jwt = verifier.verify(token);
-		return jwt.getClaims();
+		return verifier.verify(token);
 
 	}
 

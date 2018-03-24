@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.madoka.sunb0002.springbootdemo.common.filters.JwtFilter;
 import com.madoka.sunb0002.springbootdemo.common.filters.LoggingFilter;
 
 /**
@@ -32,10 +35,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Value("${app.myfilter.urlpattern:/*}")
-	private String filterUrlPattern;
-	@Value("${app.myfilter.enable:false}")
+	@Value("${app.jwt.secret}")
+	private String jwtKey;
+
+	@Value("${app.filter.enable:false}")
 	private boolean filterEnable;
+	@Value("${app.filter.log.urlpattern:/home/*}")
+	private String logFilterUrlPattern;
+	@Value("${app.filter.jwt.urlpattern:/profile/*}")
+	private String jwtFilterUrlPattern;
 
 	// Just to verify whether beans have been created.
 	@Autowired(required = false)
@@ -64,8 +72,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	/**
-	 * applicatoin.properties endpoints.cors.* are used by Actuator endpoints
-	 * only, so STILL HAVE TO manually set the global CORS configuration.
+	 * applicatoin.properties endpoints.cors.* are used by Actuator endpoints only,
+	 * so STILL HAVE TO manually set the global CORS configuration.
 	 */
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
@@ -78,13 +86,24 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	 *        Spring will pickup the filter bean automatically.
 	 */
 	@Bean
+	@Order(1)
 	public FilterRegistrationBean myFilterRegBean() {
 		FilterRegistrationBean reg = new FilterRegistrationBean();
 		reg.setFilter(new LoggingFilter());
-		reg.addUrlPatterns(filterUrlPattern);
+		reg.addUrlPatterns(logFilterUrlPattern);
 		reg.addInitParameter("initParamName", "Hello filter-chan");
-		reg.setOrder(1);
+		reg.setEnabled(filterEnable);
+		return reg;
+	}
 
+	@Profile("dev1")
+	@Bean
+	@Order(2)
+	public FilterRegistrationBean jwtFilterRegBean() {
+		FilterRegistrationBean reg = new FilterRegistrationBean();
+		reg.setFilter(new JwtFilter());
+		reg.addUrlPatterns(jwtFilterUrlPattern);
+		reg.addInitParameter("jwtKey", this.jwtKey); // My solution for filter @value injection
 		reg.setEnabled(filterEnable);
 		return reg;
 	}

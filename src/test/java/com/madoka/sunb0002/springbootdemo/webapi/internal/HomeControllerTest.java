@@ -28,7 +28,7 @@ public class HomeControllerTest {
 		String payloadStr = "Sakura Kyouko";
 
 		String jwt = JwtHelper.createToken(payloadStr, goodKey);
-		assertEquals(payloadStr, JwtHelper.parseToken(jwt, goodKey).get("name").asString());
+		assertEquals(payloadStr, JwtHelper.parseToken(jwt, goodKey).getClaim("name").asString());
 		log.info("Good key test passed.");
 
 		String badJwt = JwtHelper.createToken("Qbey", "bad key");

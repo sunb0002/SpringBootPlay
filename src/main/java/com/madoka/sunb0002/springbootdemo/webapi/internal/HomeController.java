@@ -15,12 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.common.utils.DateUtils;
 import com.madoka.sunb0002.springbootdemo.common.utils.JwtHelper;
 import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
 import com.madoka.sunb0002.springbootdemo.services.MailService;
@@ -29,6 +32,7 @@ import com.madoka.sunb0002.springbootdemo.services.jms.Producer;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
@@ -118,24 +122,17 @@ public class HomeController {
 		return new HomeResponse(200, appName, "All tests done: " + result);
 	}
 
-	@ApiOperation(value = "testJwt", notes = "Test Jwt", tags = { "Internal" })
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
-			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
-	@GetMapping("/json200JWT")
-	public HomeResponse testJwt() throws UnsupportedEncodingException {
+	@ApiOperation(value = "generateJwt", notes = "Generate Jwt", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class) })
+	@PostMapping("/generateJWT")
+	public HomeResponse generateJwt(
+			@ApiParam(value = "User name in JWT payload.", required = true) @RequestBody String userName)
+			throws UnsupportedEncodingException {
 
-		String jwt = JwtHelper.createToken("Sakura Kyouko", jwtKey);
-		log.info("Jwt created: {}", jwt);
-		log.info("Parsed from Jwt, name={}", JwtHelper.parseToken(jwt, jwtKey).get("name").asString());
-
-		try {
-			String badJwt = JwtHelper.createToken("Qbey", "bad key");
-			JwtHelper.parseToken(badJwt, jwtKey);
-		} catch (Exception e) {
-			e.printStackTrace(); // NOSONAR
-		}
-
-		return new HomeResponse(200, appName, "Jwt test done.");
+		Date expireAt = DateUtils.getDateAfterMinutes(5);
+		String jwtToken = JwtHelper.createToken(userName, expireAt, jwtKey);
+		return new HomeResponse(200, jwtToken,
+				"Jwt generated with username=" + userName + ", expires at=" + expireAt.toString());
 	}
 
 }
