@@ -3,6 +3,7 @@
  */
 package com.madoka.sunb0002.springbootdemo.webapi.profile;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,12 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
+import com.madoka.sunb0002.springbootdemo.common.dtos.AdminDTO;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
@@ -33,6 +36,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * @author Sun Bo
@@ -117,6 +121,17 @@ public class ProfileController {
 		return new ProfileResponseUser(userDto);
 	}
 
+	@ApiOperation(value = "getAdminDetails", notes = "Get admin details from jwt", tags = { "Profile" })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Admin profile has been retrieved.", response = AdminResponse.class),
+			@ApiResponse(code = 500, message = "Unexpected Error occurred", response = AdminResponse.class) })
+	@GetMapping("/admin")
+	public AdminResponse getAdminDetails(@ApiIgnore @RequestAttribute(name = "adminName") String adminName,
+			@ApiIgnore @RequestAttribute(name = "adminExpireAt") Date adminExpiry) {
+		logger.debug("Admin name={}, expiryAt={}", adminName, adminExpiry);
+		return new AdminResponse(new AdminDTO(null, adminName, adminExpiry));
+	}
+
 }
 
 @ApiModel(description = "Profile API response: single user")
@@ -135,4 +150,21 @@ class ProfileResponseUserList extends AbstractResponse<List<UserDTO>> {
 	public ProfileResponseUserList(List<UserDTO> data) {
 		super(data);
 	}
+}
+
+@ApiModel(description = "Profile API response: admin details")
+class AdminResponse extends AbstractResponse<AdminDTO> {
+	public AdminResponse(AdminDTO data) {
+		super(data);
+	}
+
+	public AdminResponse(Integer status, AdminDTO data, String msg) {
+		super(status, data, msg);
+	}
+
+	@Override
+	public String toString() {
+		return "AdminResponse [status=" + status + ", data=" + data + ", msg=" + msg + "]";
+	}
+
 }

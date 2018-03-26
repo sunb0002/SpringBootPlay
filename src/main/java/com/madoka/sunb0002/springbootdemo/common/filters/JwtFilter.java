@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -47,6 +48,13 @@ public class JwtFilter implements Filter {
 			throws IOException, ServletException {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+		// Handles pre-flight requests
+		if (HttpMethod.OPTIONS.name().equals(httpRequest.getMethod())) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String jwtToken = getBearerToken(httpRequest);
 		log.debug("Jwt filter will decode token=" + jwtToken + ", with key=" + jwtKey);
@@ -58,15 +66,16 @@ public class JwtFilter implements Filter {
 			httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Unbale to decode jwt: " + e.getMessage());
 			return;
 		}
-		String userName = jwt.getClaim("name").asString(); // NOSONAR
+		String adminName = jwt.getClaim("name").asString(); // NOSONAR
 		Date expiry = jwt.getExpiresAt();
 
-		if (Validators.isEmpty(userName) || DateUtils.compare(expiry) < 0) {
+		if (Validators.isEmpty(adminName) || DateUtils.compare(expiry) < 0) {
 			httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid or expired JWT token.");
 			return;
 		}
 
-		request.setAttribute("userName", userName);
+		request.setAttribute("adminName", adminName);
+		request.setAttribute("adminExpireAt", expiry);
 		chain.doFilter(request, response);
 
 	}
