@@ -30,6 +30,7 @@ import com.madoka.sunb0002.springbootdemo.common.filters.LoggingFilter;
  * @see SpringBoot WebMvcAutoConfiguration will do @EnableWebMvc
  *      and @ComponentScan itself.
  */
+
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
@@ -69,6 +70,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		if (!registry.hasMappingForPattern("/webjars/**")) {
 			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 		}
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 	}
 
 	/**
