@@ -6,5 +6,6 @@ http://start.spring.io/
 
 CMDs:  
 mvn spring-boot:run  
+mvn spring-boot:run -Drun.profiles=dev2  
 mvn surefire:test -DskipTests=false,test=IntegrationTest  
 mvn clean package  
