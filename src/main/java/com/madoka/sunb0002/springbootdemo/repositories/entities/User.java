@@ -18,7 +18,7 @@ import org.hibernate.envers.Audited;
  */
 @Entity
 @Audited
-@Table(schema = "precure", name = "BOOT__SBSHOP_USER")
+@Table(name = "BOOT__SBSHOP_USER")
 public class User extends BaseEntity {
 
 	/**
