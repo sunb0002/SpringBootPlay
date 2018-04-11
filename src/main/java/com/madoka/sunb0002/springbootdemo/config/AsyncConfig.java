@@ -30,9 +30,9 @@ public class AsyncConfig implements AsyncConfigurer {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private int corePoolSize = 2; // Minimum
-	private int queueCapacity = 2; // Active, make new threads waiting
-	private int maxPoolSize = 10; // Maximum
+	private int corePoolSize = 2; // Concurrent active running threads, make new threads waiting
+	private int queueCapacity = 20; // Maximum waiting threads
+	private int maxPoolSize = 20; // Maximum total number of threads
 
 	// Default executor, method name from AsyncConfigurer
 	@Bean("Async-Executor1")

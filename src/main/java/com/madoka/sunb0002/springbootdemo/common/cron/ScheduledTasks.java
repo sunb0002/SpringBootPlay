@@ -32,7 +32,8 @@ public class ScheduledTasks {
 	@Autowired
 	private UserService userService;
 
-	@Scheduled(initialDelay = 10 * 60 * 1000, fixedRate = 10 * 60 * 1000)
+	@Scheduled(initialDelay = 10 * 1000, fixedRate = 40 * 1000)
+	@Scheduled(cron = "${app.cron.schedule.report-time}")
 	@LogAnno
 	public void reportCurrentTime() {
 		logger.info("reportCurrentTime: {}", new Date());
