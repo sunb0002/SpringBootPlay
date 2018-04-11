@@ -3,7 +3,10 @@
  */
 package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -11,9 +14,12 @@ import java.util.concurrent.Future;
 
 import javax.jms.JMSException;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +33,7 @@ import com.madoka.sunb0002.springbootdemo.common.utils.DateUtils;
 import com.madoka.sunb0002.springbootdemo.common.utils.JwtHelper;
 import com.madoka.sunb0002.springbootdemo.common.utils.Validators;
 import com.madoka.sunb0002.springbootdemo.services.MailService;
+import com.madoka.sunb0002.springbootdemo.services.RestClient;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
 import com.madoka.sunb0002.springbootdemo.services.jms.Producer;
 
@@ -35,6 +42,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -53,6 +61,8 @@ public class HomeController {
 	private MailService mailService;
 	@Autowired
 	private Producer mqProducer;
+	@Autowired
+	private RestClient restClient;
 
 	@Value("${app.name}")
 	private String appName;
@@ -134,5 +144,26 @@ public class HomeController {
 		return new HomeResponse(200, jwtToken,
 				"Jwt generated with username=" + userName + ", expires at=" + expireAt.toString());
 	}
+
+	@ApiOperation(value = "makeHttpsRequest", notes = "Make a https request", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class) })
+	@GetMapping("/json200HTTPS")
+	public HomeResponse makeHttpsRequest() throws URISyntaxException, JSONException, IOException {
+
+		URI uri = new URI("https://jsonplaceholder.typicode.com/posts/3"); // NOSONAR
+		HttpHeaders headers = new HttpHeaders();
+
+		ResponseEntity<PlaceHolderPost> resp = restClient.getForGeneric(uri, headers, PlaceHolderPost.class);
+		return new HomeResponse(200, appName, "All tests done: " + resp.getBody());
+	}
+
+}
+
+@Data
+class PlaceHolderPost {
+	private Integer userId;
+	private Integer id;
+	private String title;
+	private String body;
 
 }
