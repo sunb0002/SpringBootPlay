@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author sunbo
  *
  */
-
 @Service
 @Slf4j
 public class RestClient {
@@ -66,6 +65,30 @@ public class RestClient {
 	 * 
 	 * @param uri
 	 * @param headers
+	 * @param requestBody
+	 * @return
+	 * @throws JSONException
+	 */
+	public ResponseEntity<JSONObject> postForJsonRaw(URI uri, HttpHeaders headers, Object requestBody)
+			throws JSONException {
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<Object> entity = new HttpEntity<>(requestBody, headers);
+
+		log.info("------ Querying (POST) RESTful URI:{} ", uri);
+		ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+		log.info("------ Query (POST) END. statusCode={}", response.getStatusCode().value());
+
+		String respBody = response.getBody();
+		return Validators.isEmpty(respBody) ? new ResponseEntity<>(response.getStatusCode())
+				: new ResponseEntity<>(new JSONObject(respBody), response.getStatusCode());
+
+	}
+
+	/**
+	 * 
+	 * @param uri
+	 * @param headers
 	 * @param clazz
 	 * @return
 	 * @throws JSONException
@@ -80,6 +103,32 @@ public class RestClient {
 
 		if (body != null) {
 			T genericBody = new ObjectMapper().readValue(body.toString(), clazz);
+			return new ResponseEntity<>(genericBody, statusCode);
+		} else {
+			return new ResponseEntity<>(statusCode);
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param uri
+	 * @param headers
+	 * @param requestBody
+	 * @param respClazz
+	 * @return
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+	public <T> ResponseEntity<T> postForGeneric(URI uri, HttpHeaders headers, Object requestBody, Class<T> respClazz)
+			throws JSONException, IOException {
+
+		ResponseEntity<JSONObject> respRaw = this.postForJsonRaw(uri, headers, requestBody);
+		HttpStatus statusCode = respRaw.getStatusCode();
+		JSONObject body = respRaw.getBody();
+
+		if (body != null) {
+			T genericBody = new ObjectMapper().readValue(body.toString(), respClazz);
 			return new ResponseEntity<>(genericBody, statusCode);
 		} else {
 			return new ResponseEntity<>(statusCode);

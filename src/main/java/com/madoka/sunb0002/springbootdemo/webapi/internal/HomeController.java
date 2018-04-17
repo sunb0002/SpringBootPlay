@@ -42,7 +42,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -152,14 +154,22 @@ public class HomeController {
 
 		URI uri = new URI("https://jsonplaceholder.typicode.com/posts/3"); // NOSONAR
 		HttpHeaders headers = new HttpHeaders();
-
 		ResponseEntity<PlaceHolderPost> resp = restClient.getForGeneric(uri, headers, PlaceHolderPost.class);
-		return new HomeResponse(200, appName, "All tests done: " + resp.getBody());
+		log.info("json200HTTPS-GET response body: {}", resp.getBody());
+
+		uri = new URI("https://jsonplaceholder.typicode.com/posts/"); // NOSONAR
+		PlaceHolderPost newPost = new PlaceHolderPost(1, null, "Title", "Content");
+		ResponseEntity<PlaceHolderPost> resp2 = restClient.postForGeneric(uri, headers, newPost, PlaceHolderPost.class);
+		log.info("json200HTTPS-POST response body: {}", resp2.getBody());
+
+		return new HomeResponse(200, appName, "All tests done: " + resp2.getBody());
 	}
 
 }
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 class PlaceHolderPost {
 	private Integer userId;
 	private Integer id;
