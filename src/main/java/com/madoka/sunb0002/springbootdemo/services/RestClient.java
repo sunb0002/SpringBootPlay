@@ -10,12 +10,14 @@ import javax.annotation.PostConstruct;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,11 +34,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RestClient {
 
+	@Value("${app.external.network.timeout:10000}")
+	private int timeoutLimit;
+
 	private RestTemplate restTemplate;
 
 	@PostConstruct
 	private void init() {
-		restTemplate = new RestTemplate();
+
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		factory.setReadTimeout(timeoutLimit);
+		factory.setConnectTimeout(timeoutLimit);
+		restTemplate = new RestTemplate(factory);
+
 	}
 
 	/**
