@@ -20,15 +20,16 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Sun Bo
  *
  */
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfig implements AsyncConfigurer {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private int corePoolSize = 2; // Concurrent active running threads, make new threads waiting
 	private int queueCapacity = 20; // Maximum waiting threads
@@ -49,15 +50,13 @@ public class AsyncConfig implements AsyncConfigurer {
 
 	@Bean("Async-Executor2")
 	public Executor executor2() {
-		ThreadFactory myThreadFactory = new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r);
-				t.setName("EXEC2-" + t.getId());
-				t.setPriority(Thread.MIN_PRIORITY);
-				return t;
-			}
+		ThreadFactory myThreadFactory = (Runnable r) -> {
+			Thread t = new Thread(r);
+			t.setName("EXEC2-" + t.getId());
+			t.setPriority(Thread.MIN_PRIORITY);
+			return t;
 		};
+
 		ExecutorService es = Executors.newFixedThreadPool(queueCapacity, myThreadFactory); // NOSONAR
 		// Want to play with ExecutorService before return.
 		return es;
@@ -66,7 +65,7 @@ public class AsyncConfig implements AsyncConfigurer {
 	@Bean("Test-Conditional-Executor")
 	@ConditionalOnProperty(prefix = "spring", name = "profiles.active", havingValue = "dev1")
 	public Executor executor3() {
-		logger.debug("Condition is met, creating executor3 bean.");
+		log.debug("Condition is met, creating executor3 bean.");
 		return Executors.newCachedThreadPool();
 	}
 

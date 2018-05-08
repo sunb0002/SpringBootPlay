@@ -8,8 +8,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,14 +25,15 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 import com.madoka.sunb0002.springbootdemo.webapi.GeneralResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Sun Bo
  *
  */
 @ControllerAdvice
+@Slf4j
 public class WebGlobalExceptionHandler {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private Locale locale = LocaleContextHolder.getLocale();
 
@@ -45,7 +44,7 @@ public class WebGlobalExceptionHandler {
 	@ResponseBody
 	public GeneralResponse handleServiceException(HttpServletRequest request, HttpServletResponse response,
 			ServiceException se) {
-		logger.error("ServiceException Occured: URL={}", request.getRequestURL(), se);
+		log.error("ServiceException Occured: URL={}", request.getRequestURL(), se);
 		int status = se.getStatus() != null ? se.getStatus().intValue() : HttpStatus.INTERNAL_SERVER_ERROR.value();
 		response.setStatus(status);
 		return new GeneralResponse(status, se.getMessage(),
@@ -58,7 +57,7 @@ public class WebGlobalExceptionHandler {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public GeneralResponse handleNoMappingException(HttpServletRequest request, Exception ex) {
-		logger.error("NoMappingException Occured: URL={}", request.getRequestURL(), ex);
+		log.error("NoMappingException Occured: URL={}", request.getRequestURL(), ex);
 		return new GeneralResponse(HttpStatus.BAD_REQUEST.value(), ex.getClass().getName(),
 				messageSource.getMessage("response.error.request.invalid", null, locale));
 	}
@@ -74,7 +73,7 @@ public class WebGlobalExceptionHandler {
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
 	public GeneralResponse handleException(HttpServletRequest request, Exception ex) {
-		logger.error("Exception Occured: URL=" + request.getRequestURL(), ex);
+		log.error("Exception Occured: URL=" + request.getRequestURL(), ex);
 		return new GeneralResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getClass().getName(),
 				messageSource.getMessage("response.error.general", null, locale));
 	}

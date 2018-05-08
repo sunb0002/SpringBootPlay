@@ -5,6 +5,7 @@ package com.madoka.sunb0002.springbootdemo.webapi.internal;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.concurrent.Future;
 
 import javax.jms.JMSException;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
@@ -154,8 +157,19 @@ public class HomeController {
 
 		URI uri = new URI("https://jsonplaceholder.typicode.com/posts/3"); // NOSONAR
 		HttpHeaders headers = new HttpHeaders();
-		ResponseEntity<PlaceHolderPost> resp = restClient.getForGeneric(uri, headers, PlaceHolderPost.class);
-		log.info("json200HTTPS-GET response body: {}", resp.getBody());
+		try {
+			ResponseEntity<PlaceHolderPost> resp = restClient.getForGeneric(uri, headers, PlaceHolderPost.class);
+			log.info("json200HTTPS-GET response body: {}", resp.getBody());
+		} catch (RestClientException e) {
+			if (e.getRootCause() instanceof SocketTimeoutException
+					|| e.getRootCause() instanceof ConnectTimeoutException) {
+				throw new ServiceException(HttpStatus.GATEWAY_TIMEOUT.value(),
+						"Connection timeout: failed to get response from 3rd party endpoint.");
+			} else {
+				throw new ServiceException(HttpStatus.SERVICE_UNAVAILABLE.value(),
+						"Unable to reach 3rd party endpoint.");
+			}
+		}
 
 		uri = new URI("https://jsonplaceholder.typicode.com/posts/"); // NOSONAR
 		PlaceHolderPost newPost = new PlaceHolderPost(1, null, "Title", "Content");
