@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
+import com.madoka.sunb0002.springbootdemo.config.Constants.LocalCache;
 import com.madoka.sunb0002.springbootdemo.repositories.UserRepository;
 import com.madoka.sunb0002.springbootdemo.repositories.entities.User;
 import com.madoka.sunb0002.springbootdemo.services.DtoParserService;
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(value = "sbshop-txnmgr", readOnly = true)
 	@LogAnno("Anno-Service-getSomeUsersWithSimilarName")
-	@Cacheable(cacheNames = "qbCache", condition = "#name.length() < 10")
+	@Cacheable(cacheNames = LocalCache.SHORT, condition = "#name.length() < 10")
 	public List<UserDTO> getSomeUsersWithSimilarName(String name) {
 		logger.info("Service is searching users with name like: {}", name);
 		return dtoParserSvc.parseUsers(userRepo.findNricByNameLikeUsingQuery(name));
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional("sbshop-txnmgr")
-	@CachePut(cacheNames = "qbCache", key = "#userDto.name")
+	@CachePut(cacheNames = LocalCache.SHORT, key = "#userDto.name")
 	public UserDTO saveUserProfile(UserDTO userDto) {
 
 		User u = new User();
@@ -70,7 +71,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Cacheable("qbCache")
+	@Cacheable(LocalCache.SHORT)
 	public List<UserDTO> getRandomUser() {
 		Random r = new Random();
 		char c = (char) (r.nextInt(26) + 'a');

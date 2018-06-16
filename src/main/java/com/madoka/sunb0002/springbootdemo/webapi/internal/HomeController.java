@@ -75,12 +75,13 @@ public class HomeController {
 	@Value("${app.jwt.secret}")
 	private String jwtKey;
 
+	@Deprecated
 	@ApiOperation(value = "allHail", notes = "Get successful message", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
 	@GetMapping("/json200")
 	@LogAnno
-	public HomeResponse allHail() {
+	public HomeResponse allHail() { // NOSONAR
 		log.info("waifu here info."); // NOSONAR
 		log.error("waifu here error.");
 		log.debug("waifu here debug.");

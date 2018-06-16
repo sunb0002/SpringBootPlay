@@ -16,4 +16,12 @@ public class Constants {
 		}
 	}
 
+	public class LocalCache {
+		public static final String LONG = "cache-long";
+		public static final String SHORT = "cache-short";
+
+		private LocalCache() {
+		}
+	}
+
 }
