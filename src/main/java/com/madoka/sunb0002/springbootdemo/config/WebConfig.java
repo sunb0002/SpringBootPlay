@@ -4,8 +4,6 @@ import java.util.concurrent.Executor;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,16 +23,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.madoka.sunb0002.springbootdemo.common.filters.JwtFilter;
 import com.madoka.sunb0002.springbootdemo.common.filters.LoggingFilter;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Sun Bo
  * @see SpringBoot WebMvcAutoConfiguration will do @EnableWebMvc
  *      and @ComponentScan itself.
  */
 
+@Slf4j
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Value("${app.jwt.secret}")
 	private String jwtKey;
@@ -74,8 +73,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	/**
-	 * applicatoin.properties endpoints.cors.* are used by Actuator endpoints only,
-	 * so STILL HAVE TO manually set the global CORS configuration.
+	 * applicatoin.properties endpoints.cors.* are used by Actuator endpoints
+	 * only, so STILL HAVE TO manually set the global CORS configuration.
 	 */
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
@@ -105,16 +104,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		FilterRegistrationBean reg = new FilterRegistrationBean();
 		reg.setFilter(new JwtFilter());
 		reg.addUrlPatterns(jwtFilterUrlPattern);
-		reg.addInitParameter("jwtKey", this.jwtKey); // My solution for filter @value injection
+		reg.addInitParameter("jwtKey", this.jwtKey); // My solution for filter
+														// @value injection
 		reg.setEnabled(filterEnable);
 		return reg;
 	}
 
 	@PostConstruct
 	public void verifyConfigs() {
-		logger.debug("***Has ConversionService(DefaultConversionService) been created by SpringBoot: {}",
+		log.debug("***Has ConversionService(DefaultConversionService) been created by SpringBoot: {}",
 				conversionService instanceof DefaultConversionService);
-		logger.debug("***Has Test-Conditional-Executor been created: {}", testExecutor != null);
+		log.debug("***Has Test-Conditional-Executor been created: {}", testExecutor != null);
 	}
 
 }

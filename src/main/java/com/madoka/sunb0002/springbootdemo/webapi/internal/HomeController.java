@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
 import com.madoka.sunb0002.springbootdemo.common.aop.LogAnno;
+import com.madoka.sunb0002.springbootdemo.common.context.UserI18nRequestContext;
+import com.madoka.sunb0002.springbootdemo.common.context.UserRequestContext;
 import com.madoka.sunb0002.springbootdemo.common.dtos.UserDTO;
 import com.madoka.sunb0002.springbootdemo.common.exceptions.ServiceException;
 import com.madoka.sunb0002.springbootdemo.common.utils.DateUtils;
@@ -69,25 +72,42 @@ public class HomeController {
 	@Autowired
 	private RestClient restClient;
 
+	@Autowired
+	private UserRequestContext userReqCtx;
+	@Autowired
+	private UserI18nRequestContext userI18nReqCtx;
+
 	@Value("${app.name}")
 	private String appName;
 
 	@Value("${app.jwt.secret}")
 	private String jwtKey;
 
-	@Deprecated
 	@ApiOperation(value = "allHail", notes = "Get successful message", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
-	@GetMapping("/json200")
+	@GetMapping("/allHail")
 	@LogAnno
 	public HomeResponse allHail() { // NOSONAR
 		log.info("waifu here info."); // NOSONAR
 		log.error("waifu here error.");
 		log.debug("waifu here debug.");
+
 		return new HomeResponse(200, appName, "All Hail Madoka");
 	}
 
+	@ApiOperation(value = "allHailwzParam", notes = "Get successful message", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/allHail/{puripara}")
+	@LogAnno
+	public HomeResponse allHailwzParam(@ApiParam(value = "precure", required = true) @PathVariable String puripara) {
+		log.debug("Input path={}, country={}, loaded config={}", puripara, this.userReqCtx.getCountry(),
+				this.userI18nReqCtx);
+		return new HomeResponse(200, appName, this.userI18nReqCtx.toString());
+	}
+
+	@Deprecated
 	@ApiOperation(value = "test403", notes = "Get unsuccessful message", tags = { "Internal" })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
 			@ApiResponse(code = 404, message = "Got forbidden.", response = HomeResponse.class),
