@@ -52,29 +52,50 @@ public class RequestScopeConfig {
 	@Lazy
 	@Bean
 	public UserI18nRequestContext loadI18nRequestContext() throws IOException, BindException {
-
 		final String country = this.reqCtx.getCountry();
 		log.debug("Loading i18n config with country={}", country);
+		return Validators.isNull(this.getI18nContext(country)) ? this.forceLoad18nContext(country)
+				: this.getI18nContext(country);
+	}
 
-		if (Validators.isNull(this.memoized18nCtx.get(country))) {
-			UserI18nRequestContext config = new UserI18nRequestContext();
-			config.setCountry(country);
+	/**
+	 * 
+	 * @param country
+	 * @return
+	 */
+	public UserI18nRequestContext getI18nContext(final String country) {
+		return Validators.isEmpty(country) ? null : this.memoized18nCtx.get(country);
+	}
 
-			MutablePropertySources propertySources = new MutablePropertySources();
-			ClassPathResource rsc = new ClassPathResource("/i18n/config_" + this.reqCtx.getCountry() + ".properties");
-			propertySources.addFirst(new ResourcePropertySource(rsc));
+	/**
+	 * 
+	 * @param country
+	 * @throws IOException
+	 * @throws BindException
+	 */
+	public UserI18nRequestContext forceLoad18nContext(final String country) throws IOException, BindException {
 
-			PropertiesConfigurationFactory<UserI18nRequestContext> factory = new PropertiesConfigurationFactory<>(
-					config);
-			factory.setPropertySources(propertySources);
-			factory.setIgnoreUnknownFields(true);
-			factory.bindPropertiesToTarget();
-
-			log.info("Adding i18n config={}", config);
-			this.memoized18nCtx.put(country, config);
+		if (Validators.isEmpty(country)) {
+			log.debug("Empty input country, unable to load i18n context");
+			return null;
 		}
 
-		return this.memoized18nCtx.get(country);
+		UserI18nRequestContext config = new UserI18nRequestContext();
+		config.setCountry(country);
+
+		MutablePropertySources propertySources = new MutablePropertySources();
+		ClassPathResource rsc = new ClassPathResource("/i18n/config_" + country + ".properties");
+		propertySources.addFirst(new ResourcePropertySource(rsc));
+
+		PropertiesConfigurationFactory<UserI18nRequestContext> factory = new PropertiesConfigurationFactory<>(config);
+		factory.setPropertySources(propertySources);
+		factory.setIgnoreUnknownFields(true);
+		factory.bindPropertiesToTarget();
+
+		log.info("Adding i18n config={}", config);
+		this.memoized18nCtx.put(country, config);
+		return config;
+
 	}
 
 }
