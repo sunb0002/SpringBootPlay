@@ -1,8 +1,8 @@
 package com.madoka.sunb0002.springbootdemo.config;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,7 +36,7 @@ public class RequestScopeConfig {
 	@Autowired
 	private UserRequestContext reqCtx;
 
-	private Map<String, UserI18nRequestContext> memoized18nCtx = new HashMap<>();
+	private Map<String, UserI18nRequestContext> memoized18nCtx = new ConcurrentHashMap<>();
 
 	@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Primary
@@ -67,6 +67,7 @@ public class RequestScopeConfig {
 			PropertiesConfigurationFactory<UserI18nRequestContext> factory = new PropertiesConfigurationFactory<>(
 					config);
 			factory.setPropertySources(propertySources);
+			factory.setIgnoreUnknownFields(true);
 			factory.bindPropertiesToTarget();
 
 			log.info("Adding i18n config={}", config);
