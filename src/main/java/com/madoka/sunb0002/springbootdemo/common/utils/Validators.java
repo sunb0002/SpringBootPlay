@@ -4,6 +4,7 @@
 package com.madoka.sunb0002.springbootdemo.common.utils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.util.ObjectUtils;
 
@@ -68,7 +69,7 @@ public class Validators {
 	}
 
 	/**
-	 * 
+	 * @see {@link ValidatorsTest}
 	 * @param sub
 	 * @param sup
 	 * @param ignoreCase
@@ -88,6 +89,59 @@ public class Validators {
 			return sup.indexOf(sub) > -1;
 		}
 
+	}
+
+	/**
+	 * @see {@link ValidatorsTest}
+	 * @param list
+	 * @param target
+	 * @return
+	 */
+	public static boolean containsAny(List<String> list, String target) {
+		return isEmpty(list) ? isNull(target) : list.contains(target);
+	}
+
+	/**
+	 * 
+	 * @param list
+	 * @param target
+	 * @return
+	 */
+	public static boolean allMatches(List<String> list, String target) {
+
+		if (isEmpty(list)) {
+			return isNull(target);
+		}
+
+		for (String s : list) {
+			if (isNull(s)) {
+				if (!isNull(target)) {
+					return false;
+				}
+			} else if (!s.equals(target)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static boolean allEmpty(List<String> list) {
+		return allMatches(list, null) || allMatches(list, "");
+	}
+
+	/**
+	 * @see {@link ValidatorsTest}
+	 * @param s
+	 * @param regex
+	 * @return
+	 */
+	public static boolean matchRegex(String s, String regex) {
+		return isNull(regex) || (isNull(s) ? false : Pattern.compile(regex).matcher(s).matches());
 	}
 
 }
