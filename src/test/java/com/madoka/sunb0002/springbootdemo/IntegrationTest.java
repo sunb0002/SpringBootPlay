@@ -143,7 +143,7 @@ public class IntegrationTest {
 		profileCtrler.searchUsersByName("TestNobody");
 	}
 
-	@Test
+	// @Test
 	public void testMQ() throws JMSException, InterruptedException {
 		logger.debug("Testing MQ producer and consumer.");
 
