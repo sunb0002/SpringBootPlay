@@ -19,6 +19,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
@@ -42,6 +44,7 @@ import com.madoka.sunb0002.springbootdemo.services.MailService;
 import com.madoka.sunb0002.springbootdemo.services.RestClient;
 import com.madoka.sunb0002.springbootdemo.services.UserService;
 import com.madoka.sunb0002.springbootdemo.services.jms.Producer;
+import com.madoka.sunb0002.springbootdemo.services.redis.RedisManager;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -68,9 +71,14 @@ public class HomeController {
 	@Autowired
 	private MailService mailService;
 	@Autowired
-	private Producer mqProducer;
-	@Autowired
 	private RestClient restClient;
+
+	@Lazy
+	@Autowired
+	private Producer mqProducer;
+	@Lazy
+	@Autowired
+	private RedisManager redisManager;
 
 	@Autowired
 	private UserRequestContext userReqCtx;
@@ -198,6 +206,23 @@ public class HomeController {
 		log.info("json200HTTPS-POST response body: {}", resp2.getBody());
 
 		return new HomeResponse(200, appName, "All tests done: " + resp2.getBody());
+	}
+
+	@ApiOperation(value = "getRedis", notes = "Get from redis", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@GetMapping("/getRedis")
+	public HomeResponse getRedis(@RequestParam(value = "nric", required = true) String nric) {
+		return new HomeResponse(200, "GetRedis", this.redisManager.getUser(nric).toString());
+	}
+
+	@ApiOperation(value = "putRedis", notes = "Put into redis", tags = { "Internal" })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Everything ok.", response = HomeResponse.class),
+			@ApiResponse(code = 403, message = "You'll get forbidden.", response = HomeResponse.class), })
+	@PostMapping("/putRedis")
+	public HomeResponse putRedis(
+			@ApiParam(value = "Request body to save user profile.", required = true) @RequestBody UserDTO userDto) {
+		return new HomeResponse(200, "PutRedis: " + userDto.toString(), this.redisManager.putUser(userDto));
 	}
 
 }

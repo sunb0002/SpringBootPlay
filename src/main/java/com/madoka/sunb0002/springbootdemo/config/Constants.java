@@ -9,7 +9,7 @@ public class Constants {
 	private Constants() {
 	}
 
-	public class LocalMessageQueue {
+	public static class LocalMessageQueue {
 		public static final String HUGTTO_DESTINATION = "MiraiCrystal";
 
 		private LocalMessageQueue() {
@@ -21,6 +21,17 @@ public class Constants {
 		public static final String SHORT = "cache-short";
 
 		private LocalCache() {
+		}
+	}
+
+	public static class RedisCache {
+		public static final String USER_KEY = "USER";
+
+		public enum CacheHitStatus {
+			ADDED, UPDATED, NOTFOUND;
+		}
+
+		private RedisCache() {
 		}
 	}
 
