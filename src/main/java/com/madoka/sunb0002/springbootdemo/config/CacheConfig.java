@@ -1,10 +1,13 @@
 package com.madoka.sunb0002.springbootdemo.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -19,6 +22,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import com.google.common.cache.CacheBuilder;
 import com.madoka.sunb0002.springbootdemo.config.Constants.LocalCache;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Sun Bo
  * @see For SpringBoot, this file is actually not needed since
@@ -31,6 +36,7 @@ import com.madoka.sunb0002.springbootdemo.config.Constants.LocalCache;
  */
 @Configuration
 @EnableCaching
+@Slf4j
 public class CacheConfig {
 
 	@Value("${app.cache.custom-spec.short}")
@@ -64,8 +70,16 @@ public class CacheConfig {
 	 * @param redisTemplate
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean("RedisCache")
-	public CacheManager redisCacheManager(@SuppressWarnings("rawtypes") RedisTemplate redisTemplate) {
+	public CacheManager redisCacheManager(@Qualifier("redisTemplate") Optional<RedisTemplate> rawRedisTemplate) {
+
+		RedisTemplate<String, Serializable> redisTemplate = rawRedisTemplate.orElse(null);
+		if (redisTemplate == null) {
+			log.debug("Redis dependency is not ready, skip.");
+			return null;
+		}
+
 		RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
 		redisCacheManager.setUsePrefix(true);
 

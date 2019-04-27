@@ -44,7 +44,7 @@ public class RedisManager {
 	private HashOperations<String, String, UserDTO> userOps;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Autowired(required = false)
+	@Autowired
 	public RedisManager(@Qualifier("redisTemplate") Optional<RedisTemplate> rawRedisTemplate) {
 
 		this.redisTemplate = rawRedisTemplate.orElse(null);
