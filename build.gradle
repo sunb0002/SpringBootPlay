@@ -71,3 +71,28 @@ publishing {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+
+
+task testLogging {
+  dependsOn buildEnvironment
+  doFirst {
+    logger.lifecycle("ERROR/QUIET(-q)/WARNING/LIFECYCLE(default)/INFO(-i)/DEBUG(-d)")
+    logging.captureStandardOutput LogLevel.LIFECYCLE
+    println 'A message which is logged at QUIET level, unless configured.'
+  }
+  finalizedBy 'anotherTaskA'
+  finalizedBy 'anotherTaskB'
+}
+
+task anotherTaskA {
+    doLast {
+        logger.lifecycle("Running anotherTask AAA")
+    }
+}
+
+task anotherTaskB {
+    doLast {
+        logger.lifecycle("Running anotherTask BBB")
+    }
+    mustRunAfter 'anotherTaskA'
+}
