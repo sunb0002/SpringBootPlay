@@ -73,15 +73,18 @@ tasks.withType(JavaCompile) {
 }
 
 
-task testLogging {
+task testTask {
   dependsOn buildEnvironment
   doFirst {
     logger.lifecycle("ERROR/QUIET(-q)/WARNING/LIFECYCLE(default)/INFO(-i)/DEBUG(-d)")
     logging.captureStandardOutput LogLevel.LIFECYCLE
     println 'A message which is logged at QUIET level, unless configured.'
   }
-  finalizedBy 'anotherTaskA'
-  finalizedBy 'anotherTaskB'
+  finalizedBy 'anotherTaskA', 'anotherTaskB'
+  3.times { counter ->
+    // Gradle execute tasks by alphabatic-desc order by default  
+    finalizedBy "DynamicTask-$counter"
+  }
 }
 
 task anotherTaskA {
@@ -94,5 +97,23 @@ task anotherTaskB {
     doLast {
         logger.lifecycle("Running anotherTask BBB")
     }
-    mustRunAfter 'anotherTaskA'
+    // mustRunAfter 'anotherTaskA'
 }
+// Orchestrating existing tasks externally
+anotherTaskB.mustRunAfter 'anotherTaskA'
+
+
+// Dynamic tasks
+4.times { idx -> 
+    def taskName = "DynamicTask-$idx"
+    task "$taskName" {
+        ext.myProperty = "myProp-$idx"
+        doFirst {
+            def thisTask = tasks.named(taskName).get()
+            logger.lifecycle("I'm dynamic task, path={}, myProp={}", thisTask.name, thisTask.myProperty)
+        }
+    }
+}
+
+// Default tasks
+defaultTasks 'clean', 'testTask'
