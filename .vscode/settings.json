@@ -1,4 +1,8 @@
 {
     "git.ignoreLimitWarning": true,
-    "java.configuration.updateBuildConfiguration": "disabled"
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "files.associations": {
+        "*.ttml": "xml",
+        "*.ttss": "css"
+    }
 }
